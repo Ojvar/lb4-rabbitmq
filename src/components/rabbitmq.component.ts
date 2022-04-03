@@ -14,7 +14,7 @@ import {ConsumersBooter} from '../booters';
 import {RabbitmqServiceKeys} from '../keys';
 import {RabbitmqService} from '../services';
 
-const trace = debugFactory('RabbitmqService:RabbitmqComponent');
+const trace = debugFactory('Rabbitmq-Service:RabbitmqComponent');
 
 export class RabbitmqComponent implements Component {
   lifeCycleObservers?: Constructor<LifeCycleObserver>[];
