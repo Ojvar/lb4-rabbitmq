@@ -5,6 +5,7 @@ import {RabbitmqServiceKeys} from './keys';
 export namespace RabbitmqServiceTypes {
   export type RabbitmqConfig = amqplib.Options.Connect;
   export type ConsumeMessage = amqplib.ConsumeMessage;
+  export type OptionsConsume = amqplib.Options.Consume;
 
   export const asConsumer: BindingTemplate = binding => {
     extensionFor(RabbitmqServiceKeys.RABBITMQ_SERVICE_EXTENSION_POINT)(binding);
@@ -17,8 +18,11 @@ export namespace RabbitmqServiceTypes {
   export interface Consumer {
     name?: string;
     queue: string;
-    consumeOptions?: amqplib.Options.Consume;
+    consumeOptions?: OptionsConsume;
 
-    handler(channel: amqplib.Channel, msg: amqplib.ConsumeMessage | null): void;
+    handler(
+      channel: RabbitmqServiceTypes.RabbitmqConfig,
+      msg: amqplib.ConsumeMessage | null,
+    ): void;
   }
 }
