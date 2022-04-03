@@ -45,6 +45,12 @@ export class RabbitmqService extends EventEmitter {
     private getConsumers: Getter<RabbitmqServiceTypes.Consumer[]>,
   ) {
     super();
+
+    this.connect()
+      .then(res => {
+        console.log('Connected to RMQ');
+      })
+      .catch(err => console.error);
   }
 
   private async connect(): Promise<void> {

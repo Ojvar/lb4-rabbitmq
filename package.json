@@ -1,6 +1,6 @@
 {
   "name": "rabbitmq-service",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "rabbitmq-service",
   "keywords": [
     "loopback-application",

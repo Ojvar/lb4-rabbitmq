@@ -1,15 +1,9 @@
 import {BindingTemplate, ContextTags, extensionFor} from '@loopback/core';
-import {ConsumeMessage, Options} from 'amqplib';
+import amqplib, {ConsumeMessage, Options} from 'amqplib';
 import {RabbitmqServiceKeys} from './keys';
 
 export namespace RabbitmqServiceTypes {
-  export type RabbitmqConfig = {
-    username: string;
-    password: string;
-    vhost: string;
-    host: string;
-    port: number;
-  };
+  export type RabbitmqConfig = amqplib.Options.Connect;
 
   export const asConsumer: BindingTemplate = binding => {
     extensionFor(RabbitmqServiceKeys.RABBITMQ_SERVICE_EXTENSION_POINT)(binding);
