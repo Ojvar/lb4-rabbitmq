@@ -41,11 +41,14 @@ export class RabbitmqObjserver implements LifeCycleObserver {
   ) {}
 
   async start() {
-    trace('Lifecycle -> Start');
+    trace('Rabbitmq Starting');
     await this.rabbitmqService.connect();
+    trace('Rabbitmq Started');
   }
 
   async stop() {
-    trace('Lifecycle -> Stop');
+    trace('Rabbitmq Stopping');
+    await this.rabbitmqService.disconnect();
+    trace('Rabbitmq Stoped');
   }
 }
