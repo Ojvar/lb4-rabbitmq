@@ -81,7 +81,7 @@ export class RabbitmqService extends EventEmitter {
     exchange: string,
     routeKey: string,
     content: Buffer,
-    options?: amqplib.Options.Publish | undefined,
+    options?: RabbitmqServiceTypes.RabbitmqOptionsPublish | undefined,
   ): boolean {
     return this._channel.publish(exchange, routeKey, content, options);
   }
@@ -89,7 +89,7 @@ export class RabbitmqService extends EventEmitter {
   public send(
     queue: string,
     content: Buffer,
-    options?: amqplib.Options.Publish | undefined,
+    options?: RabbitmqServiceTypes.RabbitmqOptionsPublish | undefined,
   ): boolean {
     return this._channel.sendToQueue(queue, content, options);
   }
