@@ -19,6 +19,6 @@ export namespace RabbitmqServiceTypes {
     queue: string;
     consumeOptions?: amqplib.Options.Consume;
 
-    handler(msg: amqplib.ConsumeMessage | null): void;
+    handler(channel: amqplib.Channel, msg: amqplib.ConsumeMessage | null): void;
   }
 }

@@ -99,7 +99,8 @@ export class RabbitmqService extends EventEmitter {
   ): Promise<amqplib.Replies.Consume> {
     const result = await this._channel.consume(
       consumer.queue,
-      consumer.handler,
+      (msg: amqplib.ConsumeMessage | null) =>
+        consumer.handler(this._channel, msg),
       consumer.consumeOptions,
     );
 
