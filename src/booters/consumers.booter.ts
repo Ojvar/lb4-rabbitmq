@@ -55,12 +55,6 @@ export class ConsumersBooter extends BaseArtifactBooter {
   }
 }
 
-function toOptions(nameOrOptions?: string | BindingFromClassOptions) {
-  return typeof nameOrOptions === 'string'
-    ? {name: nameOrOptions}
-    : nameOrOptions ?? {};
-}
-
 export const ConsumersDefaults: ArtifactOptions = {
   dirs: ['consumers'],
   extensions: ['.consumer.js'],

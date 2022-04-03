@@ -48,20 +48,18 @@ export class RabbitmqService extends EventEmitter {
     private getConsumers: Getter<RabbitmqServiceTypes.Consumer[]>,
   ) {
     super();
-
-    this.connect()
-      .then(res => {
-        console.log('Connected to RMQ');
-      })
-      .catch(err => console.error);
+    // this.connect()
+    //   .then(() => console.log('Connected to RabbitMQ'))
+    //   .catch(console.error);
   }
 
-  private async connect(): Promise<void> {
+  public async connect(): Promise<void> {
     this._connection = await amqplib.connect(this.configs);
+    trace(this.configs);
     trace('Connected to RabbitMQ');
 
     this._channel = await this._connection.createChannel();
-    trace('Channel Created successfully');
+    trace('Channel created successfully');
 
     this.emit(RabbitmqEvents.CONNECTED, {
       connection: this._connection,
@@ -78,7 +76,7 @@ export class RabbitmqService extends EventEmitter {
     }
   }
 
-  private async disconnect(): Promise<void> {
+  public async disconnect(): Promise<void> {
     trace('Disconnecting');
 
     await this._channel.close();
@@ -109,13 +107,15 @@ export class RabbitmqService extends EventEmitter {
   public async consume(
     consumer: RabbitmqServiceTypes.Consumer,
   ): Promise<RabbitmqServiceTypes.RabbitmqRepliesConsume> {
+    trace('Add Consumer');
+    trace(consumer);
+
     const result = await this._channel.consume(
       consumer.queue,
       (msg: amqplib.ConsumeMessage | null) =>
         consumer.handler(this._channel, msg),
       consumer.consumeOptions,
     );
-    trace('Consume', consumer);
 
     this.emit(RabbitmqEvents.REGISTER_CONSUMER, {consumer, result});
 
