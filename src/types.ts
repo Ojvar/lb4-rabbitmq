@@ -1,11 +1,17 @@
-import {BindingTemplate, ContextTags, extensionFor} from '@loopback/core';
+import {
+  BindingTemplate,
+  Constructor,
+  ContextTags,
+  extensionFor,
+} from '@loopback/core';
 import amqplib from 'amqplib';
 import {RabbitmqServiceKeys} from './keys';
 
 export namespace RabbitmqServiceTypes {
   export type RabbitmqChannel = amqplib.Channel;
+  export type RabbitmqRepliesConsume = amqplib.Replies.Consume;
   export type RabbitmqOptionsPublish = amqplib.Options.Publish;
-  export type RabbitmqConfig = amqplib.Options.Connect;
+  export type RabbitmqOptionsConnect = amqplib.Options.Connect;
   export type ConsumeMessage = amqplib.ConsumeMessage;
   export type OptionsConsume = amqplib.Options.Consume;
 
@@ -20,11 +26,13 @@ export namespace RabbitmqServiceTypes {
   export interface Consumer {
     name?: string;
     queue: string;
-    consumeOptions?: OptionsConsume;
+    consumeOptions?: OptionsConsume | undefined;
 
     handler(
       channel: RabbitmqServiceTypes.RabbitmqChannel,
       msg: RabbitmqServiceTypes.ConsumeMessage | null,
     ): void;
   }
+
+  export type ConsumerClass<T = unknown> = Constructor<T>;
 }

@@ -8,9 +8,12 @@ import {
   injectable,
 } from '@loopback/core';
 import amqplib from 'amqplib';
+import debugFactory from 'debug';
 import {EventEmitter} from 'stream';
 import {RabbitmqServiceKeys} from '../keys';
 import {RabbitmqServiceTypes} from '../types';
+
+const trace = debugFactory('Rabbitmq-Service:RabbitmqService');
 
 export enum RabbitmqEvents {
   CONNECTED = 'CONNECTED',
@@ -40,7 +43,7 @@ export class RabbitmqService extends EventEmitter {
 
   constructor(
     @config({optional: true})
-    private configs: RabbitmqServiceTypes.RabbitmqConfig,
+    private configs: RabbitmqServiceTypes.RabbitmqOptionsConnect,
     @extensions()
     private getConsumers: Getter<RabbitmqServiceTypes.Consumer[]>,
   ) {
@@ -55,7 +58,10 @@ export class RabbitmqService extends EventEmitter {
 
   private async connect(): Promise<void> {
     this._connection = await amqplib.connect(this.configs);
+    trace('Connected to RabbitMQ');
+
     this._channel = await this._connection.createChannel();
+    trace('Channel Created successfully');
 
     this.emit(RabbitmqEvents.CONNECTED, {
       connection: this._connection,
@@ -64,6 +70,8 @@ export class RabbitmqService extends EventEmitter {
 
     /* Register all consumers */
     const consumers = await this.getConsumers();
+    trace('Consumers', consumers);
+
     for (const consumer of consumers) {
       const result = await this.consume(consumer);
       this.emit(RabbitmqEvents.REGISTER_CONSUMER, {consumer, result});
@@ -71,6 +79,8 @@ export class RabbitmqService extends EventEmitter {
   }
 
   private async disconnect(): Promise<void> {
+    trace('Disconnecting');
+
     await this._channel.close();
     await this._connection.close();
 
@@ -83,6 +93,7 @@ export class RabbitmqService extends EventEmitter {
     content: Buffer,
     options?: RabbitmqServiceTypes.RabbitmqOptionsPublish | undefined,
   ): boolean {
+    trace('Publish', exchange, routeKey, content, options);
     return this._channel.publish(exchange, routeKey, content, options);
   }
 
@@ -91,18 +102,20 @@ export class RabbitmqService extends EventEmitter {
     content: Buffer,
     options?: RabbitmqServiceTypes.RabbitmqOptionsPublish | undefined,
   ): boolean {
+    trace('Send', queue, content, options);
     return this._channel.sendToQueue(queue, content, options);
   }
 
   public async consume(
     consumer: RabbitmqServiceTypes.Consumer,
-  ): Promise<amqplib.Replies.Consume> {
+  ): Promise<RabbitmqServiceTypes.RabbitmqRepliesConsume> {
     const result = await this._channel.consume(
       consumer.queue,
       (msg: amqplib.ConsumeMessage | null) =>
         consumer.handler(this._channel, msg),
       consumer.consumeOptions,
     );
+    trace('Consume', consumer);
 
     this.emit(RabbitmqEvents.REGISTER_CONSUMER, {consumer, result});
 
