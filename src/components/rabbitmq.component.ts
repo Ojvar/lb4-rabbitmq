@@ -1,11 +1,13 @@
 import {
   Binding,
   Component,
+  Constructor,
   ContextTags,
   createBindingFromClass,
   inject,
   lifeCycleObserver,
   LifeCycleObserver,
+  ProviderMap,
 } from '@loopback/core';
 import debugFactory from 'debug';
 import {ConsumersBooter} from '../booters';
@@ -15,13 +17,20 @@ import {RabbitmqService} from '../services';
 const trace = debugFactory('RabbitmqService:RabbitmqComponent');
 
 export class RabbitmqComponent implements Component {
-  lifeCycleObservers = [RabbitmqObjserver];
-  booters = [ConsumersBooter];
-  bindings?: Binding<unknown>[] | undefined = [
-    createBindingFromClass(RabbitmqService, {
-      [ContextTags.KEY]: RabbitmqServiceKeys.RABBITMQ_SERVICE,
-    }),
-  ];
+  lifeCycleObservers?: Constructor<LifeCycleObserver>[];
+  bindings?: Binding[];
+  providers?: ProviderMap = {};
+  booters: unknown[];
+
+  constructor() {
+    this.lifeCycleObservers = [RabbitmqObjserver];
+    this.booters = [ConsumersBooter];
+    this.bindings = [
+      createBindingFromClass(RabbitmqService, {
+        [ContextTags.KEY]: RabbitmqServiceKeys.RABBITMQ_SERVICE,
+      }),
+    ];
+  }
 }
 
 @lifeCycleObserver()
