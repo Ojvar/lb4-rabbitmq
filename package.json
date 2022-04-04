@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/Ojvar/lb4-rabbitmq.git"
   },
   "author": "Ojvar <MOjvar.AmirHossein@gmail.com>",
   "license": "",
