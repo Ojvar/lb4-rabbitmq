@@ -1,7 +1,7 @@
 {
-  "name": "rabbitmq-service",
+  "name": "lb4-rabbitmq",
   "version": "0.0.4",
-  "description": "rabbitmq-service",
+  "description": "Loopback4 Rabbitmq simple client",
   "keywords": [
     "loopback-application",
     "loopback"
