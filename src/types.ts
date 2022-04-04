@@ -28,6 +28,8 @@ export namespace RabbitmqServiceTypes {
     queue: string;
     consumeOptions?: OptionsConsume | undefined;
 
+    setup?(channel: RabbitmqServiceTypes.RabbitmqChannel): void | Promise<void>;
+
     handler(
       channel: RabbitmqServiceTypes.RabbitmqChannel,
       msg: RabbitmqServiceTypes.ConsumeMessage | null,

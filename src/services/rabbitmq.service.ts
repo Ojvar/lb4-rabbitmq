@@ -44,13 +44,9 @@ export class RabbitmqService extends EventEmitter {
   constructor(
     @config({optional: true})
     private configs: RabbitmqServiceTypes.RabbitmqOptionsConnect,
-    @extensions()
-    private getConsumers: Getter<RabbitmqServiceTypes.Consumer[]>,
+    @extensions() private getConsumers: Getter<RabbitmqServiceTypes.Consumer[]>,
   ) {
     super();
-    // this.connect()
-    //   .then(() => console.log('Connected to RabbitMQ'))
-    //   .catch(console.error);
   }
 
   public async connect(): Promise<void> {
@@ -110,6 +106,12 @@ export class RabbitmqService extends EventEmitter {
     trace('Add Consumer');
     trace(consumer);
 
+    /* setup consumer */
+    if (consumer.setup) {
+      await consumer.setup(this._channel);
+    }
+
+    /* Register consumer */
     const result = await this._channel.consume(
       consumer.queue,
       (msg: amqplib.ConsumeMessage | null) =>
